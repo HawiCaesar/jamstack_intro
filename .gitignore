@@ -1,0 +1,14 @@
+.env
+.DS_Store
+.idea
+.vscode
+.cache
+npm-debug.log
+node_modules
+coverage
+dist
+config.local.json
+npm-debug.log*
+**/package-lock.json
+.medableactive
+.vscode-mdctl/**
