@@ -25,7 +25,7 @@ const reducer = (state, action) => {
 export const Form = () => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  const setStatus = status => dispatch({type: 'updateStatus', status})
+  const setStatus = (status) => dispatch({ type: 'updateStatus', status });
 
   const updateFieldValue = (field) => (event) => {
     dispatch({ type: 'updateFieldValue', field, value: event.target.value });
@@ -33,22 +33,49 @@ export const Form = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setStatus('PENDING')
-    setTimeout(() => setStatus('SUCCESS'), 1000)
+    setStatus('PENDING');
+    //setTimeout(() => setStatus('SUCCESS'), 1000)
+    fetch('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify(state),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response)
+        setStatus('SUCCESS');
+      })
+      .catch((error) => {
+        console.error(error);
+        setStatus('ERROR');
+      });
   };
 
   if (state.status === 'SUCCESS') {
-    return <p className={styles.success}>Message Sent!
-      <button type="reset" onClick={() => dispatch({type: 'reset'})} className={`${styles.button} ${styles.centered}`}>Reset</button>
-    </p>;
+    return (
+      <p className={styles.success}>
+        Message Sent!
+        <button
+          type='reset'
+          onClick={() => dispatch({ type: 'reset' })}
+          className={`${styles.button} ${styles.centered}`}
+        >
+          Reset
+        </button>
+      </p>
+    );
   }
 
   return (
     <>
-     {state.status === 'ERROR' && (
-       <p className={styles.error}>Something went wrong. Please try again</p>
-     )}
-      <form className={`${styles.form} ${state.status === 'PENDING'? styles.pending : ''}` } onSubmit={handleSubmit}>
+      {state.status === 'ERROR' && (
+        <p className={styles.error}>Something went wrong. Please try again</p>
+      )}
+      <form
+        className={`${styles.form} ${
+          state.status === 'PENDING' ? styles.pending : ''
+        }`}
+        onSubmit={handleSubmit}
+      >
         <label className={styles.label}>
           Name
           <input
